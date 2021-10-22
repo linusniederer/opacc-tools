@@ -6,11 +6,8 @@
 
 Class PasswordReminder {
 
-    # Active Directory Configuration
-    $activeDirectory        = ""
-
     # Password guidelines
-    [int] $maxPasswordAge   = 360 
+    [int] $maxPasswordAge   = 180 
     [int] $warnLevel1       = 15
     [int] $warnLevel2       = 5
     [int] $warnLevel3       = 1
@@ -18,7 +15,7 @@ Class PasswordReminder {
     # Email configuration
     [string] $smtpServer    = "owa.opacc.ch"
     [string] $mailFrom      = "passwordreminder@opacc.ch"
-    [string] $mailSubject   = "Dein Passwort f√ºr die Dom√§ne opacc.local l√§uft bald ab!"
+    [string] $mailSubject   = "Dein Passwort fÅ¸r die Dom‰ne opacc.local l‰uft bald ab!"
 
 
     # Constructor of class
@@ -61,11 +58,11 @@ Class PasswordReminder {
                 <body>
                     Hallo $displayName,
                     <br>
-                    Dein Windows-Passwort l√§uft am $expireDate ab.
+                    Dein Windows-Passwort l‰uft am $expireDate ab.
                     <br>
-                    Du hast $expireDays Tage bis dein Passwort abl√§uft. Bitte √§ndere es rechtzeitig.
+                    Du hast $expireDays Tage bis dein Passwort abl‰uft. Bitte ‰ndere es rechtzeitig.
                     <br>
-                    Freundliche Gr√ºsse
+                    Freundliche Gr¸sse
                     <br>
                     Opacc Systemtechnik
                 </body>
