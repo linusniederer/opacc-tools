@@ -55,13 +55,13 @@ Class PasswordReminder {
             <html>
                 <head>
                 </head>
-                <body>
+                <body bgcolor='#333333' style='font-size:14.0pt'>
                     Hallo $displayName,
-                    <br>
+                    <br><br>
                     Dein Windows-Passwort läuft am $expireDate ab.
-                    <br>
+                    <br><br>
                     Du hast $expireDays Tage bis dein Passwort abläuft. Bitte ändere es rechtzeitig.
-                    <br>
+                    <br><br>
                     Freundliche Grüsse
                     <br>
                     Opacc Systemtechnik
