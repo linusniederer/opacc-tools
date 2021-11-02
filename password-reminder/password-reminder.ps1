@@ -16,6 +16,7 @@ Class PasswordReminder {
     [string] $smtpServer    = "owa.opacc.ch"
     [string] $mailFrom      = "passwordreminder@opacc.ch"
     [string] $mailSubject   = "Dein Passwort fÅ¸r die Dom‰ne opacc.local l‰uft bald ab!"
+    [string] $mailTemplate  = "C:\Admin\Scripts\opacc-tools\password-reminder\template.html"
 
 
     # Constructor of class
@@ -28,20 +29,23 @@ Class PasswordReminder {
         
         $adUsers = Get-ADUser "linusniederer" -Properties DisplayName,PasswordLastSet,mail
 
-        $today = Get-Date 
-        $passwordExpireDate = $adUsers.PasswordLastSet.AddDays( + $this.maxPasswordAge )
-        $daysBeforePWchange = ($passwordExpireDate - $today).Days
+        foreach( $adUser in $adUsers ) {
 
-        if ( $daysBeforePWchange -eq $this.warnLevel1 -or $daysBeforePWchange -eq $this.warnLevel2 -or $daysBeforePWchange -eq $this.warnLevel3 -or $daysBeforePWchange -lt $this.warnLevel3 ) {
+            $today = Get-Date 
+            $passwordExpireDate = $adUser.PasswordLastSet.AddDays( + $this.maxPasswordAge )
+            $daysBeforePWchange = ($passwordExpireDate - $today).Days
 
-           <# Send mail if:
-            #   days before change are equal to one of the warning levels
-            #   days before change are lower than the warning level 3
-            #>
-            $passwordExpireDate = $passwordExpireDate.toString("dd.MM.yyyy")
-            $mailBody = $this.mailTemplate($adUsers.DisplayName, $passwordExpireDate, $daysBeforePWchange)
-            $this.sendMail($adUsers.mail, $mailBody)
-        } 
+            if ( $daysBeforePWchange -eq $this.warnLevel1 -or $daysBeforePWchange -eq $this.warnLevel2 -or $daysBeforePWchange -eq $this.warnLevel3 -or $daysBeforePWchange -lt $this.warnLevel3 ) {
+
+                <# Send mail if:
+                #   days before change are equal to one of the warning levels
+                #   days before change are lower than the warning level 3
+                #>
+                $passwordExpireDate = $passwordExpireDate.toString("dd.MM.yyyy")
+                $mailBody = $this.createMail($adUser.DisplayName, $passwordExpireDate, $daysBeforePWchange)
+                $this.sendMail($adUser.mail, $mailBody)
+            }                           
+        }
     }
 
     # Function to send password expiring email
@@ -50,25 +54,10 @@ Class PasswordReminder {
     }
 
     # Function to create mail template
-    [string] mailTemplate($displayName, $expireDate, $expireDays ) {
-        $mailHTML = "
-            <html>
-                <head>
-                </head>
-                <body bgcolor='#333333' style='font-size:14.0pt'>
-                    Hallo $displayName,
-                    <br><br>
-                    Dein Windows-Passwort l‰uft am $expireDate ab.
-                    <br><br>
-                    Du hast $expireDays Tage bis dein Passwort abl‰uft. Bitte ‰ndere es rechtzeitig.
-                    <br><br>
-                    Freundliche Gr¸sse
-                    <br>
-                    Opacc Systemtechnik
-                </body>
-            </html>
-        "
-       return $mailHTML
+    [string] createMail($displayName, $expireDate, $expireDays ) {
+
+        $template = Get-Content -Path $this.mailTemplate
+        return $template.Replace("[USERNAME]", $displayName).Replace("[DATE]", $expireDate).Replace("[DAYS]", $expireDays)
     }
 }
 
