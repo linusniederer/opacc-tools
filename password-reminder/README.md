@@ -1,1 +1,22 @@
-# opacc-tools
+# Active Directory Password Reminder
+
+This PowerShell script can be used to send automatic password reminder emails. The script can be used on any environment.
+
+## Adapt to the environment
+
+Before the script can be used, some variables in the script must be changed. These are located on lines 9 to 19.
+
+```powershell
+# Password guidelines
+[int] $maxPasswordAge   = 180 
+[int] $warnLevel1       = 15
+[int] $warnLevel2       = 5
+[int] $warnLevel3       = 1
+
+# Email configuration
+[string] $smtpServer    = "" # add smtp server here
+[string] $mailFrom      = "" # add from address here
+[string] $mailSubject   = "" # add mail subject here
+[string] $mailTemplate  = "" # add path to html template here
+```
+
