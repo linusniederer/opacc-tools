@@ -1,7 +1,7 @@
 # Active Directory Password Reminder
 #
 # @author:  https://github.com/linusniederer
-# @changes: 22.10.2021
+# @changes: 02.11.2021
 # 
 
 Class PasswordReminder {
