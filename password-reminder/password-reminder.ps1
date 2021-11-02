@@ -13,10 +13,10 @@ Class PasswordReminder {
     [int] $warnLevel3       = 1
 
     # Email configuration
-    [string] $smtpServer    = "owa.opacc.ch"
-    [string] $mailFrom      = "passwordreminder@opacc.ch"
-    [string] $mailSubject   = "Dein Passwort fÅ¸r die Dom‰ne opacc.local l‰uft bald ab!"
-    [string] $mailTemplate  = "C:\Admin\Scripts\opacc-tools\password-reminder\template.html"
+    [string] $smtpServer    = ""
+    [string] $mailFrom      = ""
+    [string] $mailSubject   = ""
+    [string] $mailTemplate  = ""
 
 
     # Constructor of class
@@ -27,7 +27,7 @@ Class PasswordReminder {
     # Fuction to get all ADUsers on Active Directory
     [void] checkUserPasswords() {
         
-        $adUsers = Get-ADUser "linusniederer" -Properties DisplayName,PasswordLastSet,mail
+        $adUsers = Get-ADUser -Properties DisplayName,PasswordLastSet,mail
 
         foreach( $adUser in $adUsers ) {
 
