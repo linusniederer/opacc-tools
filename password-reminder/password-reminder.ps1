@@ -27,7 +27,7 @@ Class PasswordReminder {
     # Fuction to get all ADUsers on Active Directory
     [void] checkUserPasswords() {
         
-        $adUsers = Get-ADUser -Properties DisplayName,PasswordLastSet,mail
+        $adUsers = Get-ADUser -Properties GivenName,DisplayName,PasswordLastSet,mail
 
         foreach( $adUser in $adUsers ) {
 
@@ -42,7 +42,7 @@ Class PasswordReminder {
                 #   days before change are lower than the warning level 3
                 #>
                 $passwordExpireDate = $passwordExpireDate.toString("dd.MM.yyyy")
-                $mailBody = $this.createMail($adUser.DisplayName, $passwordExpireDate, $daysBeforePWchange)
+                $mailBody = $this.createMail($adUser.GivenName, $passwordExpireDate, $daysBeforePWchange)
                 $this.sendMail($adUser.mail, $mailBody)
             }                           
         }
