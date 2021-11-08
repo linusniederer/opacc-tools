@@ -27,7 +27,7 @@ Class PasswordReminder {
     # Fuction to get all ADUsers on Active Directory
     [void] checkUserPasswords() {
         
-        $adUsers = Get-ADUser -Properties GivenName,DisplayName,PasswordLastSet,mail
+        $adUsers = Get-ADUser -Properties GivenName,DisplayName,PasswordLastSet,mail -Filter *
 
         foreach( $adUser in $adUsers ) {
 
