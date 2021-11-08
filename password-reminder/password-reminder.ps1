@@ -1,16 +1,19 @@
 # Active Directory Password Reminder
 #
 # @author:  https://github.com/linusniederer
-# @changes: 02.11.2021
+# @changes: 22.10.2021
 # 
 
 Class PasswordReminder {
 
     # Password guidelines
-    [int] $maxPasswordAge   = 180 
+    [int] $maxPasswordAge   = 360 
     [int] $warnLevel1       = 15
     [int] $warnLevel2       = 5
     [int] $warnLevel3       = 1
+
+    # Active Directory configuration
+    [array] $organizationalUnits = @("", "")
 
     # Email configuration
     [string] $smtpServer    = ""
@@ -26,25 +29,32 @@ Class PasswordReminder {
 
     # Fuction to get all ADUsers on Active Directory
     [void] checkUserPasswords() {
-        
-        $adUsers = Get-ADUser -Properties GivenName,DisplayName,PasswordLastSet,mail -Filter *
 
-        foreach( $adUser in $adUsers ) {
+        Write-Host "Started PasswordReminder from Task Scheduler [$(Get-Date)]"
 
-            $today = Get-Date 
-            $passwordExpireDate = $adUser.PasswordLastSet.AddDays( + $this.maxPasswordAge )
-            $daysBeforePWchange = ($passwordExpireDate - $today).Days
+        foreach( $organizationalUnit in $this.organizationalUnits ) {
+            $adUsers = Get-ADUser -Properties GivenName,DisplayName,PasswordLastSet,mail -Filter * -SearchBase $organizationalUnit
 
-            if ( $daysBeforePWchange -eq $this.warnLevel1 -or $daysBeforePWchange -eq $this.warnLevel2 -or $daysBeforePWchange -eq $this.warnLevel3 -or $daysBeforePWchange -lt $this.warnLevel3 ) {
+            foreach( $adUser in $adUsers ) {
 
-                <# Send mail if:
-                #   days before change are equal to one of the warning levels
-                #   days before change are lower than the warning level 3
-                #>
-                $passwordExpireDate = $passwordExpireDate.toString("dd.MM.yyyy")
-                $mailBody = $this.createMail($adUser.GivenName, $passwordExpireDate, $daysBeforePWchange)
-                $this.sendMail($adUser.mail, $mailBody)
-            }                           
+                if( $adUser.GivenName -ne $NULL -and $adUser.mail -ne $NULL -and $adUser.PasswordLastSet -ne $NULL ) {
+                    $today = Get-Date 
+                    $passwordExpireDate = $adUser.PasswordLastSet.AddDays( + $this.maxPasswordAge )
+                    $daysBeforePWchange = ($passwordExpireDate - $today).Days
+
+                    if( $daysBeforePWchange -eq $this.warnLevel1 -or $daysBeforePWchange -eq $this.warnLevel2 -or $daysBeforePWchange -eq $this.warnLevel3 -or $daysBeforePWchange -lt $this.warnLevel3 ) {
+
+                        <# Send mail if:
+                        #   days before change are equal to one of the warning levels
+                        #   days before change are lower than the warning level 3
+                        #>
+                        $passwordExpireDate = $passwordExpireDate.toString("dd.MM.yyyy")
+                        $mailBody = $this.createMail($adUser.GivenName, $passwordExpireDate, $daysBeforePWchange)
+                        $this.sendMail($adUser.mail, $mailBody)
+                        Write-Host "Mail sent to user $($adUser.mail)"
+                    }         
+                }                  
+            }
         }
     }
 
@@ -55,7 +65,6 @@ Class PasswordReminder {
 
     # Function to create mail template
     [string] createMail($displayName, $expireDate, $expireDays ) {
-
         $template = Get-Content -Path $this.mailTemplate
         return $template.Replace("[USERNAME]", $displayName).Replace("[DATE]", $expireDate).Replace("[DAYS]", $expireDays)
     }
