@@ -15,7 +15,7 @@ Add-WindowsFeature RSAT-AD-PowerShell
 
 ## Adapt to the environment
 
-Before the script can be used, some variables in the script must be changed. These are located on lines 9 to 19.
+Before the script can be used, some variables in the script must be changed. These are located on lines 9 to 22.
 
 ```powershell
 # Password guidelines
@@ -23,6 +23,9 @@ Before the script can be used, some variables in the script must be changed. The
 [int] $warnLevel1       = 15
 [int] $warnLevel2       = 5
 [int] $warnLevel3       = 1
+
+# Active Directory configuration
+[array] $organizationalUnits = @("", "") # add organizational units here
 
 # Email configuration
 [string] $smtpServer    = "" # add smtp server here
