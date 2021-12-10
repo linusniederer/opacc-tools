@@ -28,12 +28,13 @@ class OpaccServices {
     [string] $regexServiceBus   = "Opacc[.]{1}ServiceBus[.]{1}App"
     # [string] $regexFrontend     = "Opacc[.]{1}OxasFrontend[.]{1}WebApp"
     [string] $regexFrontend     = "Opacc[.]OxasFrontend"
+    [string] $regexSimpleIndex  = "SimpleIndexService"
 
     # Array of service types
-    [array] $serviceTypes       = @("Service", "Frontend", "Agent", "ServiceBus")
+    [array] $serviceTypes       = @("Service", "Frontend", "Agent", "ServiceBus", "SimpleIndex")
 
-    [array] $startSequence      = @("Frontend", "ServiceBus", "Service", "Agent")
-    [array] $stopSequence       = @("Agent", "Service", "ServiceBus", "Frontend")
+    [array] $startSequence      = @("Frontend", "ServiceBus", "Service", "Agent", "SimpleIndex")
+    [array] $stopSequence       = @("Agent", "Service", "ServiceBus", "Frontend", "SimpleIndex")
     
 
     # Constructor of Class
@@ -97,7 +98,7 @@ class OpaccServices {
 
         foreach( $serviceBusNode in $this.serviceBusNodes.DNS ) {
             
-            $services = Get-Service -ComputerName $serviceBusNode | Where-Object { $_.Name -match 'Opacc.' }
+            $services = Get-Service -ComputerName $serviceBusNode | Where-Object { $_.Name -match 'Opacc.' -or $_.Name -match 'SimpleIndexService' }
 
             foreach( $service in $services ) {
                 if( -Not $this.isDuplicated( $this.serviceBusServices, $service.Name )) {
@@ -107,8 +108,8 @@ class OpaccServices {
                         $this.regexAgent      { $this.addServiceObject($service, $serviceBusNode, "Agent") }
                         $this.regexFrontend   { $this.addServiceObject($service, $serviceBusNode, "Frontend") }
                         $this.regexServiceBus { $this.addServiceObject($service, $serviceBusNode, "ServiceBus") }
+                        $this.regexSimpleIndex{ $this.addServiceObject($service, $serviceBusNode, "SimpleIndex") }
                     }
-
                 }
             }
         }                    
@@ -124,7 +125,7 @@ class OpaccServices {
             $services = $this.serviceBusServices | Where-Object { $_.Type -eq $serviceType }
             $this.toString("Starting service type [$serviceType]")
 
-            # services starten
+            # services start
             foreach ($service in $services) {
                 Start-Job -Name $service.Name -scriptblock { 
                     param($serviceBusNode, $serviceName)     
