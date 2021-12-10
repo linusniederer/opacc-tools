@@ -104,11 +104,12 @@ class OpaccServices {
                 if( -Not $this.isDuplicated( $this.serviceBusServices, $service.Name )) {
                     
                     switch -Regex ($service.Name) {
-                        $this.regexService    { $this.addServiceObject($service, $serviceBusNode, "Service") }
-                        $this.regexAgent      { $this.addServiceObject($service, $serviceBusNode, "Agent") }
-                        $this.regexFrontend   { $this.addServiceObject($service, $serviceBusNode, "Frontend") }
-                        $this.regexServiceBus { $this.addServiceObject($service, $serviceBusNode, "ServiceBus") }
-                        $this.regexSimpleIndex{ $this.addServiceObject($service, $serviceBusNode, "SimpleIndex") }
+                        $this.regexService     { $this.addServiceObject($service, $serviceBusNode, "Service") }
+                        $this.regexAgent       { $this.addServiceObject($service, $serviceBusNode, "Agent") }
+                        $this.regexFrontend    { $this.addServiceObject($service, $serviceBusNode, "Frontend") }
+                        $this.regexServiceBus  { $this.addServiceObject($service, $serviceBusNode, "ServiceBus") }
+                        $this.regexSimpleIndex { $this.addServiceObject($service, $serviceBusNode, "SimpleIndex") }
+
                     }
                 }
             }
