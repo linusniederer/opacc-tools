@@ -15,7 +15,7 @@ if( $action -ne $null ) { $action = $action.ToLower() }
 
 class OpaccServices {
 
-    [bool] $writeLog            = $true # Change to log information
+    [bool] $writeLog            = $false # Change to write log information
     [String] $opaccInstallationXML
 
     # Array to Store Nodes and Services
@@ -26,7 +26,6 @@ class OpaccServices {
     [string] $regexService      = "Opacc[.]{1}.*[.]{1}(Service[:]{1}|Services[.]Warehouse|Services[.]{1}Service[.]{1}Host)"
     [string] $regexAgent        = "Opacc[.]{1}.*[.]{1}(?=Agent[:]{1})"
     [string] $regexServiceBus   = "Opacc[.]{1}ServiceBus[.]{1}App"
-    # [string] $regexFrontend     = "Opacc[.]{1}OxasFrontend[.]{1}WebApp"
     [string] $regexFrontend     = "Opacc[.]OxasFrontend"
     [string] $regexSimpleIndex  = "SimpleIndexService"
 
@@ -102,14 +101,12 @@ class OpaccServices {
 
             foreach( $service in $services ) {
                 if( -Not $this.isDuplicated( $this.serviceBusServices, $service.Name )) {
-                    
                     switch -Regex ($service.Name) {
                         $this.regexService     { $this.addServiceObject($service, $serviceBusNode, "Service") }
                         $this.regexAgent       { $this.addServiceObject($service, $serviceBusNode, "Agent") }
                         $this.regexFrontend    { $this.addServiceObject($service, $serviceBusNode, "Frontend") }
                         $this.regexServiceBus  { $this.addServiceObject($service, $serviceBusNode, "ServiceBus") }
                         $this.regexSimpleIndex { $this.addServiceObject($service, $serviceBusNode, "SimpleIndex") }
-
                     }
                 }
             }
