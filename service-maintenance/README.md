@@ -13,10 +13,10 @@ start ./OpaccServicesStop.bat
 
 # Changelog
 
-## [1.0.1] - 10. Dec. 2021
+## Version 1.0.1 - 10. Dec. 2021
 ### Added
 - Adding SimpleIndex service support
 
-## [1.0.0] - 19. Oct. 2021
+## Version 1.0.0 - 19. Oct. 2021
 ### Added
 - Application tested and released
