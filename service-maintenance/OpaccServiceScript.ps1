@@ -1,12 +1,12 @@
-# OpaccServiceScript
-# Korrekter Start/Stop der Opacc-Services
+# OpaccERP Service Maintenance
 #
 # @author:  Linus Niederer
-# @changes: 19.10.2021
+# @created: 19.10.2021
+#
+# changelog: https://github.com/linusniederer/opacc-tools/tree/main/service-maintenance#changelog
 # 
 
-
-# Start Parameter
+# Parameter
 # START, STOP, RESTART
 
 Param( $action )
