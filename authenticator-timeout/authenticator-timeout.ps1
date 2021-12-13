@@ -7,12 +7,15 @@
 Class Authenticator {
 
     # Config
-    [int] $timeoutAfter     = 8   # timeout in hours
+    [int] $timeoutAfter     = 1   # timeout in hours
     [string] $processName   = "CAA"
-    [bool] $autostart       = $true
+    
+    [string] $killTitle     = "Sophos Client Authenticator Timeout"
+    [string] $killMSG       = "Der Client Authenticator wurde aufgrund der Dauer beendet!"
 
     # Constructor of class
     Authenticator() {
+
         while( $true ) {
             $this.getProcess()
             Start-Sleep -s 60
@@ -23,22 +26,30 @@ Class Authenticator {
     [void] getProcess() {
 
         $process = Get-Process | Where-Object { $_.ProcessName -eq $this.processName }
-        $startTime = $process.StartTime
-        $currentTime = (Get-Date)
 
-        $difference = New-TimeSpan -Start $startTime -End $currentTime
+        if( $process -ne $NULL ) {
+            $startTime = $process.StartTime
+            $currentTime = (Get-Date)
 
-        if( $difference.Hours -gt 8 ) {
-            Write-Host "Kill process with ID $($process.ID)"
-            Stop-Process -Id $process.Id
+            $difference = New-TimeSpan -Start $startTime -End $currentTime
 
-        } else {
-            Write-Host "Nothing to do process is running for $difference"
+            if( $difference.Hours -ge $this.timeoutAfter ) {
+                Write-Host "Kill process with ID $($process.ID)"
+                $this.killProcess( $process.ID )
+            } else {
+                Write-Host "TEST123"
+            }
         }
+    }
+
+    # Function to kill proceess
+    [void] killProcess( $id ) {
+        Stop-Process -Id $id
+        # [System.Windows.Forms.MessageBox]::Show( $this.killMSG, $this.killTitle, 0, [System.Windows.Forms.MessageBoxIcon]::Exclamation )
     }
 }
 
-
-
 # Run Script
-$authenticator = [Authenticator]::new()
+function Main() {
+    $authenticator = [Authenticator]::new()
+}
