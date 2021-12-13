@@ -27,7 +27,7 @@ Class PasswordReminder {
        # nothing to do here
     }
 
-    # Fuction to get all ADUsers on Active Directory
+    # Function to get all ADUsers on Active Directory
     [void] checkUserPasswords() {
 
         Write-Host "Started PasswordReminder from Task Scheduler [$(Get-Date)]"
