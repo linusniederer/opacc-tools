@@ -30,10 +30,10 @@ class OpaccServices {
     [string] $regexSimpleIndex  = "SimpleIndexService"
 
     # Array of service types
-    [array] $serviceTypes       = @("Service", "Frontend", "Agent", "ServiceBus", "SimpleIndex")
+    [array] $serviceTypes       = @("Service", "Frontend", "Agent", "ServiceBus")
 
-    [array] $startSequence      = @("Frontend", "ServiceBus", "Service", "Agent", "SimpleIndex")
-    [array] $stopSequence       = @("Agent", "Service", "ServiceBus", "Frontend", "SimpleIndex")
+    [array] $startSequence      = @("Frontend", "ServiceBus", "Service", "Agent")
+    [array] $stopSequence       = @("Agent", "Service", "ServiceBus", "Frontend")
     
 
     # Constructor of Class
@@ -97,16 +97,15 @@ class OpaccServices {
 
         foreach( $serviceBusNode in $this.serviceBusNodes.DNS ) {
             
-            $services = Get-Service -ComputerName $serviceBusNode | Where-Object { $_.Name -match 'Opacc.' -or $_.Name -match 'SimpleIndexService' }
+            $services = Get-Service -ComputerName $serviceBusNode | Where-Object { $_.Name -match 'Opacc.' }
 
             foreach( $service in $services ) {
                 if( -Not $this.isDuplicated( $this.serviceBusServices, $service.Name )) {
                     switch -Regex ($service.Name) {
-                        $this.regexService     { $this.addServiceObject($service, $serviceBusNode, "Service") }
-                        $this.regexAgent       { $this.addServiceObject($service, $serviceBusNode, "Agent") }
-                        $this.regexFrontend    { $this.addServiceObject($service, $serviceBusNode, "Frontend") }
-                        $this.regexServiceBus  { $this.addServiceObject($service, $serviceBusNode, "ServiceBus") }
-                        $this.regexSimpleIndex { $this.addServiceObject($service, $serviceBusNode, "SimpleIndex") }
+                        $this.regexService    { $this.addServiceObject($service, $serviceBusNode, "Service") }
+                        $this.regexAgent      { $this.addServiceObject($service, $serviceBusNode, "Agent") }
+                        $this.regexFrontend   { $this.addServiceObject($service, $serviceBusNode, "Frontend") }
+                        $this.regexServiceBus { $this.addServiceObject($service, $serviceBusNode, "ServiceBus") }
                     }
                 }
             }
