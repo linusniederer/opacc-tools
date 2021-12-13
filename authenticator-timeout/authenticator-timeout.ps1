@@ -15,7 +15,6 @@ Class Authenticator {
 
     # Constructor of class
     Authenticator() {
-
         while( $true ) {
             $this.getProcess()
             Start-Sleep -s 60
@@ -36,8 +35,6 @@ Class Authenticator {
             if( $difference.Hours -ge $this.timeoutAfter ) {
                 Write-Host "Kill process with ID $($process.ID)"
                 $this.killProcess( $process.ID )
-            } else {
-                Write-Host "TEST123"
             }
         }
     }
@@ -45,7 +42,7 @@ Class Authenticator {
     # Function to kill proceess
     [void] killProcess( $id ) {
         Stop-Process -Id $id
-        # [System.Windows.Forms.MessageBox]::Show( $this.killMSG, $this.killTitle, 0, [System.Windows.Forms.MessageBoxIcon]::Exclamation )
+        # TODO: Start MSGBox via external vbs script
     }
 }
 
