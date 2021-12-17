@@ -17,7 +17,7 @@ Class Authenticator {
     Authenticator() {
         while( $true ) {
             $this.getProcess()
-            Start-Sleep -s 60
+            Start-Sleep -s 30
         }
     }
 
@@ -32,7 +32,7 @@ Class Authenticator {
 
             $difference = New-TimeSpan -Start $startTime -End $currentTime
 
-            if( $difference.Hours -ge $this.timeoutAfter ) {
+            if( $difference.Minutes -ge $this.timeoutAfter ) {
                 Write-Host "Kill process with ID $($process.ID)"
                 $this.killProcess( $process.ID )
             }
@@ -42,11 +42,10 @@ Class Authenticator {
     # Function to kill proceess
     [void] killProcess( $id ) {
         Stop-Process -Id $id
-        # TODO: Start MSGBox via external vbs script
     }
 }
 
-# Run Script
+# Run Script as Windows Service
 function Main() {
     $authenticator = [Authenticator]::new()
 }
