@@ -27,7 +27,6 @@ class OpaccServices {
     [string] $regexAgent        = "Opacc[.]{1}.*[.]{1}(?=Agent[:]{1})"
     [string] $regexServiceBus   = "Opacc[.]{1}ServiceBus[.]{1}App"
     [string] $regexFrontend     = "Opacc[.]OxasFrontend"
-    [string] $regexSimpleIndex  = "SimpleIndexService"
 
     # Array of service types
     [array] $serviceTypes       = @("Service", "Frontend", "Agent", "ServiceBus")
