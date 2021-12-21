@@ -17,20 +17,16 @@ This script can be used to get all services on the different ServiceBusNodes. Th
 This script has no effect on the status of individual services.
 
 ## OpaccServicesStart.bat
-This script starts all services on all nodes if they are not already started. Finally, the status of all services is displayed in a table if the script was not executed via task scheduling.
+This script starts all services on all nodes if they are not already started. Finally, the status of all services are displayed in a table if the script was not executed via task scheduling.
 
 ## OpaccServiceStop.bat
-This script stops all services on all nodes if they are not already stopped. Finally, the status of all services is displayed in a table if the script was not executed via task scheduling.
+This script stops all services on all nodes if they are not already stopped. Finally, the status of all services are displayed in a table if the script was not executed via task scheduling.
 
 ## OpaccServiceMaintenance.bat
-This script stops all services on all nodes and starts them again after a timeout of 5 seconds. Finally, the status of all services is displayed in a table if the script was not executed via task scheduling.
+This script stops all services on all nodes and starts them again after a timeout of 5 seconds. Finally, the status of all services are displayed in a table if the script was not executed via task scheduling.
 
 
 # Changelog
-
-## Version 1.0.1 - 10. Dec. 2021
-### Added
-- Adding SimpleIndex service support
 
 ## Version 1.0.0 - 19. Oct. 2021
 ### Added
