@@ -3,7 +3,7 @@
 # @author:  Linus Niederer
 # @created: 19.10.2021
 #
-# changelog: https://github.com/linusniederer/opacc-tools/tree/main/service-maintenance#changelog
+# changelog: https://github.com/linusniederer/opacc-tools/tree/main/opacc-maintenance#changelog
 # 
 
 # Parameter
