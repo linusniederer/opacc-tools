@@ -1,9 +1,9 @@
 # Abacus Service Maintenance
 #
 # @author:  Linus Niederer
-# @created: 19.10.2021
+# @created: 21.12.2021
 #
-# changelog: https://github.com/linusniederer/opacc-tools/tree/main/service-maintenance#changelog
+# changelog: https://github.com/linusniederer/opacc-tools/tree/main/abacus-maintenance#changelog
 # 
 
 # Parameter
@@ -16,170 +16,119 @@ if( $action -ne $null ) { $action = $action.ToLower() }
 class AbacusServices {
 
     [bool] $writeLog            = $false # Change to write log information
-    [String] $opaccInstallationXML
 
-    # Array to Store Nodes and Services
-    [array] $serviceBusNodes    = @()
-    [array] $serviceBusServices = @()
+    # Array to services
+    [array] $serverServices = @()
 
     # Regex patterns to declaire service types
-    [string] $regexService      = "Opacc[.]{1}.*[.]{1}(Service[:]{1}|Services[.]Warehouse|Services[.]{1}Service[.]{1}Host)"
-    [string] $regexAgent        = "Opacc[.]{1}.*[.]{1}(?=Agent[:]{1})"
-    [string] $regexServiceBus   = "Opacc[.]{1}ServiceBus[.]{1}App"
-    [string] $regexFrontend     = "Opacc[.]OxasFrontend"
-    [string] $regexSimpleIndex  = "SimpleIndexService"
-    [string] $regexAbacus       = ""
+    [string] $regexCTree        = "ABACUS CTree Server"
+    [string] $regexWarehouse    = "AbaDataWarehouse"
+    [string] $regexEngine       = "AbaEngine"
+    [string] $regexMetrics      = "AbaMetricsService"
+    [string] $regexMonitor      = "AbaMonitorService"
+    [string] $regexWrap         = "AbaWrapService"
 
     # Array of service types
-    [array] $serviceTypes       = @("Service", "Frontend", "Agent", "ServiceBus")
+    [array] $serviceTypes       = @("Wrap", "Engine", "Warehouse", "Metrics", "Monitor", "CTree")
 
-    [array] $startSequence      = @("Frontend", "ServiceBus", "Service", "Agent")
-    [array] $stopSequence       = @("Agent", "Service", "ServiceBus", "Frontend")
+    [array] $startSequence      = @("CTree", "Engine", "Warehouse", "Metrics", "Monitor", "Wrap")
+    [array] $stopSequence       = @("Wrap", "Engine", "Warehouse", "Metrics", "Monitor", "CTree")
     
 
     # Constructor of Class
     AbacusServices() {
-        if( $this.checkScriptPath() ) {
-            $this.getServiceBusNodes()
-            $this.getOpaccServices()
-        }
+        $this.getAbacusServices()
     }
 
-    # Method to change Script Path
-    hidden [bool] checkScriptPath() {
-        $currentPath = Get-Location
-        
-        if( $currentpath -match "IP\\sys") {
-            $path = $currentPath -split "\\Insyde\\"
-            $this.opaccInstallationXML = "$($path[0])\Insyde\OpaccOneInstallation.xml"
-        } else {
-            if( $this.opaccInstallationXML -ne $null ) {
-                return $true
-            } else {
-                # OpaccOneInstallation.xml Path not found!
-                $this.toString("Error: OpaccOneInstallation.xml not found!")
-                return $false
-            }
-        }
-
-        return $true;
-    }
-
-    # Method to get ServiceBusNodes from OpaccOneInstallation.xml
-    hidden [void] getServiceBusNodes() {
-        $xml = New-Object System.XML.XMLDocument
-        $xml.Load( $this.opaccInstallationXML )
-        $this.serviceBusNodes.Clear()
-        
-        foreach( $xmlValue in $xml.Configuration.Installation.ServiceBusCluster ) {
-            $serviceBusNodeName = $xmlValue.ServiceBusNode.Name
-            $serviceBusNodeDNS  = $xmlValue.ServiceBusNode.InternalIpAddressOrHostName
-
-            if($serviceBusNodeName -ne 'localhost') {
-                if(-Not $this.isDuplicated( $this.serviceBusNodes, $serviceBusNodeName )) {
-                    $nodeObject = New-Object -TypeName psobject
-                    $nodeObject | Add-Member -MemberType NoteProperty -Name Name -Value $serviceBusNodeName
-                    $nodeObject | Add-Member -MemberType NoteProperty -Name DNS -Value $serviceBusNodeDNS
-        
-                    $this.serviceBusNodes += $nodeObject        
-                }
-            }
-        }
-
-        $this.toString('Found the following nodes:')
-        $this.ToString( $this.serviceBusNodes.Name )
-    }
-
-    # Method to get OpaccServices from ServiceBusNodes
-    [void] getOpaccServices() {
+    # Method to get AbacusServices from server
+    [void] getAbacusServices() {
 
         $this.toString('Found the following services:')
-        $this.serviceBusServices.Clear()
+        $this.serverServices.Clear()
 
-        foreach( $serviceBusNode in $this.serviceBusNodes.DNS ) {
-            
-            $services = Get-Service -ComputerName $serviceBusNode | Where-Object { $_.Name -match 'Opacc.' }
+        $services = Get-Service
 
-            foreach( $service in $services ) {
-                if( -Not $this.isDuplicated( $this.serviceBusServices, $service.Name )) {
-                    switch -Regex ($service.Name) {
-                        $this.regexService    { $this.addServiceObject($service, $serviceBusNode, "Service") }
-                        $this.regexAgent      { $this.addServiceObject($service, $serviceBusNode, "Agent") }
-                        $this.regexFrontend   { $this.addServiceObject($service, $serviceBusNode, "Frontend") }
-                        $this.regexServiceBus { $this.addServiceObject($service, $serviceBusNode, "ServiceBus") }
-                    }
+        foreach( $service in $services ) {
+            if( -Not $this.isDuplicated( $this.serverServices, $service.Name )) {
+                switch -Regex ($service.Name) {
+                    $this.regexCTree        { $this.addServiceObject($service, "CTree") }
+                    $this.regexWarehouse    { $this.addServiceObject($service, "Warehouse") }
+                    $this.regexEngine       { $this.addServiceObject($service, "Engine") }
+                    $this.regexMetrics      { $this.addServiceObject($service, "Metrics") }
+                    $this.regexMonitor      { $this.addServiceObject($service, "Monitor") }
+                    $this.regexWrap         { $this.addServiceObject($service, "Wrap") }
                 }
             }
-        }                    
+        }
+               
     }
 
-    # Method to start OpaccServices on ServiceBusNodes
-    [void] startOpaccServices() {
+    # Method to start AbacusServices on server
+    [void] startAbacusServices() {
 
-        $this.toString('Starting services on all nodes...')
+        $this.toString('Starting services on server ...')
 
         foreach($serviceType in $this.startSequence) {
 
-            $services = $this.serviceBusServices | Where-Object { $_.Type -eq $serviceType }
+            $services = $this.serverServices | Where-Object { $_.Type -eq $serviceType }
             $this.toString("Starting service type [$serviceType]")
 
             # services start
             foreach ($service in $services) {
                 Start-Job -Name $service.Name -scriptblock { 
-                    param($serviceBusNode, $serviceName)     
-                    Start-Service -InputObject $(get-service -ComputerName $serviceBusNode -Name $serviceName)
-                } -Argumentlist $service.ServiceBus, $service.Name
+                    param($serviceName)     
+                    Start-Service -InputObject $(get-service -Name $serviceName)
+                } -Argumentlist $service.Name
             }
 
             # wait for all jobs to be finished
             Get-Job | Wait-Job -Timeout 30
         }  
 
-        $this.getOpaccServices()
+        $this.getAbacusServices()
     }
 
-    # Method to stop OpaccServices on ServiceBusNodes
-    [void] stopOpaccServices() {
+    # Method to stop AbacusServices on server
+    [void] stopAbacusServices() {
 
         $this.toString('Stoping services on all nodes...')
 
         foreach($serviceType in $this.stopSequence) {
 
-            $services = $this.serviceBusServices | Where-Object { $_.Type -eq $serviceType }
+            $services = $this.serverServices | Where-Object { $_.Type -eq $serviceType }
             $this.toString("Stoping service type [$serviceType]")
 
-            # services starten
+            # services stop
             foreach ($service in $services) {
                 Start-Job -Name $service.Name -scriptblock { 
-                    param($serviceBusNode, $serviceName)     
-                    Stop-Service -InputObject $(get-service -ComputerName $serviceBusNode -Name $serviceName)
-                } -Argumentlist $service.ServiceBus, $service.Name
+                    param($serviceName)      
+                    Stop-Service -InputObject $(get-service -Name $serviceName)
+                } -Argumentlist $service.Name
             }
 
             # wait for all jobs to be finished
             Get-Job | Wait-Job -Timeout 30
         }  
 
-        $this.getOpaccServices()
+        $this.getAbacusServices()
     }
 
-    # Method to restart OpaccServices on ServiceBusNodes
-    [void] restartOpaccServices() {
-        $this.stopOpaccServices()
+    # Method to restart AbacusServices on server
+    [void] restartAbacusServices() {
+        $this.stopAbacusServices()
         Start-Sleep -s 5
-        $this.startOpaccServices()
+        $this.startAbacusServices()
     }
 
     # Method to add data to serviceObject
-    hidden [void] addServiceObject($service, $serviceBusNode, $serviceType) {
+    hidden [void] addServiceObject($service, $serviceType) {
         $serviceObject = New-Object -TypeName psobject
 
-        $serviceObject | Add-Member -MemberType NoteProperty -Name ServiceBus -Value $serviceBusNode
         $serviceObject | Add-Member -MemberType NoteProperty -Name Name -Value $service.Name
         $serviceObject | Add-Member -MemberType NoteProperty -Name Type -Value $serviceType
         $serviceObject | Add-Member -MemberType NoteProperty -Name Status -Value $service.Status
         
-        $this.serviceBusServices += $serviceObject
+        $this.serverServices += $serviceObject
     }
 
     # Method to find out whether ServiceBusNodes already exists
@@ -205,26 +154,25 @@ class AbacusServices {
 
         # write log if defined
         if($this.writeLog) {
-            if (!(Test-Path "./log/OpaccServiceMaintenance.log")) {
-                New-Item -path "./log/OpaccServiceMaintenance.log" -value "$timestamp #> $message" -Force
+            if (!(Test-Path "./log/AbacusServiceMaintenance.log")) {
+                New-Item -path "./log/AbacusServiceMaintenance.log" -value "$timestamp #> $message" -Force
             } else {
-                Add-Content -Path './log/OpaccServiceMaintenance.log' -Value "$timestamp #> $message"
+                Add-Content -Path './log/AbacusServiceMaintenance.log' -Value "$timestamp #> $message"
             }
         }
     }
 }
 
 # Call to static property
-$OpaccServices = [OpaccServices]::new()
+$AbacusServices = [AbacusServices]::new()
 
 switch($action) {
-    'start'     { $OpaccServices.startOpaccServices() }
-    'stop'      { $OpaccServices.stopOpaccServices() }
-    'restart'   { $OpaccServices.restartOpaccServices() }
+    'start'     { $AbacusServices.startAbacusServices() }
+    'stop'      { $AbacusServices.stopAbacusServices() }
+    'restart'   { $AbacusServices.restartAbacusServices() }
 }
 
 Clear-Host
 
 # Show all services and their status
-$OpaccServices.serviceBusServices | Sort-Object -Property Type, Status, Name, Node | Format-Table
-$OpaccServices.serviceBusNodes
+$AbacusServices.serverServices | Sort-Object -Property Type, Status, Name, Node | Format-Table
