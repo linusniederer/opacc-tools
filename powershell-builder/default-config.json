@@ -1,0 +1,29 @@
+{
+    "name":"",
+    "version":"1.0.0",
+    "title":"",
+    "description":"",
+    "type":"",
+    "company":" ",
+    "author":" ",
+    "copyright":"",
+    "icon":"",
+    "outPath":"",
+    "projectPath":"",
+    "files":[
+        {
+            "name":"",
+            "path":"",
+            "size":"",
+            "timestamp":"",
+            "position":1
+        },
+        {
+            "name":"",
+            "path":"",
+            "size":"",
+            "timestamp":"",
+            "position":2
+        }
+    ]
+}
