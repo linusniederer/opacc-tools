@@ -7,12 +7,9 @@
 Class Authenticator {
 
     # Config
-    [int] $timeoutAfter     = 1   # timeout in hours
+    [string] $timeoutTime   = "22:00"
     [string] $processName   = "CAA"
     
-    [string] $killTitle     = "Sophos Client Authenticator Timeout"
-    [string] $killMSG       = "Der Client Authenticator wurde aufgrund der Dauer beendet!"
-
     # Constructor of class
     Authenticator() {
         while( $true ) {
@@ -26,16 +23,10 @@ Class Authenticator {
 
         $process = Get-Process | Where-Object { $_.ProcessName -eq $this.processName }
 
-        if( $process -ne $NULL ) {
-            $startTime = $process.StartTime
-            $currentTime = (Get-Date)
-
-            $difference = New-TimeSpan -Start $startTime -End $currentTime
-
-            if( $difference.Minutes -ge $this.timeoutAfter ) {
-                Write-Host "Kill process with ID $($process.ID)"
-                $this.killProcess( $process.ID )
-            }
+        if( $process -ne $NULL -and  (Get-Date -Format "HH:mm") -eq $this.timeoutTime ) {
+            Write-EventLog -LogName "Application" -Source "ClientAuthenticatorTimeout" -EventID 10 -Message "Kill process with ID $($process.ID)" -EntryType Information
+            $this.killProcess( $process.ID )
+            Write-EventLog -LogName "Application" -Source "ClientAuthenticatorTimeout" -EventID 10 -Message "Killed process with ID $($process.ID)" -EntryType Warning
         }
     }
 
