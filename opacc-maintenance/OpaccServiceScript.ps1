@@ -1,10 +1,11 @@
 # OpaccERP Service Maintenance
 #
-# @author:  Linus Niederer
-# @created: 19.10.2021
+# @author:      https://github.com/linusniederer
+# @created:     19.10.2021
 #
-# changelog: https://github.com/linusniederer/opacc-tools/tree/main/opacc-maintenance#changelog
-# 
+# @changelog:   https://github.com/linusniederer/opacc-tools/tree/main/opacc-maintenance#changelog
+# @current:     https://github.com/linusniederer/opacc-tools/tree/main/opacc-maintenance#version-101---04-feb-2022
+#
 
 # Parameter
 # START, STOP, RESTART
