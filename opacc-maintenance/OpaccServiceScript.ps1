@@ -23,7 +23,7 @@ class OpaccServices {
     [array] $serviceBusServices = @()
 
     # Regex patterns to declaire service types
-    [string] $regexService      = "Opacc[.]{1}.*[.]{1}(Service[:]{1}|Services[.]Warehouse|Services[.]{1}Service[.]{1}Host)"
+    [string] $regexService      = "Opacc[.]{1}.*[.]{1}(Service[:]{1}|Services[.]Warehouse|Services[.]{1}Service[.]{1}Host|Services[.]{1}Whis|Service[.]{1}Whis)"
     [string] $regexAgent        = "Opacc[.]{1}.*[.]{1}(?=Agent[:]{1})"
     [string] $regexServiceBus   = "Opacc[.]{1}ServiceBus[.]{1}App"
     [string] $regexFrontend     = "Opacc[.]OxasFrontend"
