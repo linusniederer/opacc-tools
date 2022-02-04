@@ -37,7 +37,7 @@ Class PasswordReminder {
 
             foreach( $adUser in $adUsers ) {
 
-                if( $adUser.GivenName -ne $NULL -and $adUser.mail -ne $NULL -and $adUser.PasswordLastSet -ne $NULL ) {
+                if( $adUser.Name -ne $NULL -and $adUser.mail -ne $NULL -and $adUser.PasswordLastSet -ne $NULL ) {
                     $today = Get-Date 
                     $passwordExpireDate = $adUser.PasswordLastSet.AddDays( + $this.maxPasswordAge )
                     $daysBeforePWchange = ($passwordExpireDate - $today).Days
