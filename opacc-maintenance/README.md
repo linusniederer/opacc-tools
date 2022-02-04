@@ -28,6 +28,10 @@ This script stops all services on all nodes and starts them again after a timeou
 
 # Changelog
 
+## Version 1.0.1 - 04. Feb. 2022
+### Added
+- Adapt regex pattern for Mof.Services.Whis to services regex filter
+
 ## Version 1.0.0 - 19. Oct. 2021
 ### Added
 - Application tested and released
