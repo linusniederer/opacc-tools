@@ -33,11 +33,11 @@ Class PasswordReminder {
         Write-Host "Started PasswordReminder from Task Scheduler [$(Get-Date)]"
 
         foreach( $organizationalUnit in $this.organizationalUnits ) {
-            $adUsers = Get-ADUser -Properties Name,DisplayName,PasswordLastSet,mail -Filter * -SearchBase $organizationalUnit
+            $adUsers = Get-ADUser -Properties GivenName,DisplayName,PasswordLastSet,mail -Filter * -SearchBase $organizationalUnit
 
             foreach( $adUser in $adUsers ) {
 
-                if( $adUser.Name -ne $NULL -and $adUser.mail -ne $NULL -and $adUser.PasswordLastSet -ne $NULL ) {
+                if( $adUser.GivenName -ne $NULL -and $adUser.mail -ne $NULL -and $adUser.PasswordLastSet -ne $NULL ) {
                     $today = Get-Date 
                     $passwordExpireDate = $adUser.PasswordLastSet.AddDays( + $this.maxPasswordAge )
                     $daysBeforePWchange = ($passwordExpireDate - $today).Days
@@ -49,7 +49,7 @@ Class PasswordReminder {
                         #   days before change are lower than the warning level 3
                         #>
                         $passwordExpireDate = $passwordExpireDate.toString("dd.MM.yyyy")
-                        $mailBody = $this.createMail($adUser.Name, $passwordExpireDate, $daysBeforePWchange)
+                        $mailBody = $this.createMail($adUser.GivenName, $passwordExpireDate, $daysBeforePWchange)
                         $this.sendMail($adUser.mail, $mailBody)
                         Write-Host "Mail sent to user $($adUser.mail)"
                     }         
