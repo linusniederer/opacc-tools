@@ -28,6 +28,10 @@ This script stops all services on all nodes and starts them again after a timeou
 
 # Changelog
 
+## Version 1.0.2 - 21. Feb. 2022
+- Adapt regex pattern for Opacc.B2B.Messenger to agent regex filter
+- Deactivate parallel starts for ServiceBus types
+
 ## Version 1.0.1 - 04. Feb. 2022
 - Adapt regex pattern for Mof.Services.Whis to services regex filter
 

@@ -25,7 +25,7 @@ class OpaccServices {
 
     # Regex patterns to declaire service types
     [string] $regexService      = "Opacc[.]{1}.*[.]{1}(Service[:]{1}|Services[.]Warehouse|Services[.]{1}Service[.]{1}Host|Services[.]{1}Whis|Service[.]{1}Whis)"
-    [string] $regexAgent        = "Opacc[.]{1}.*[.]{1}(?=Agent[:]{1})"
+    [string] $regexAgent        = "Opacc[.]{1}.*[.]{1}(?=Agent[:]{1}|Messenger)"
     [string] $regexServiceBus   = "Opacc[.]{1}ServiceBus[.]{1}App"
     [string] $regexFrontend     = "Opacc[.]OxasFrontend"
 
@@ -122,12 +122,22 @@ class OpaccServices {
             $services = $this.serviceBusServices | Where-Object { $_.Type -eq $serviceType }
             $this.toString("Starting service type [$serviceType]")
 
-            # services start
-            foreach ($service in $services) {
-                Start-Job -Name $service.Name -scriptblock { 
-                    param($serviceBusNode, $serviceName)     
-                    Start-Service -InputObject $(get-service -ComputerName $serviceBusNode -Name $serviceName)
-                } -Argumentlist $service.ServiceBus, $service.Name
+            # no paralell start for ServiceBus
+            if ($serviceType -eq "ServiceBus") {
+                foreach ($service in $services) {
+                    Start-Service -InputObject $(get-service -ComputerName $service.ServiceBus -Name $service.Name)
+                    Start-Sleep -s 5
+                }
+
+            } else {
+
+                # services start
+                foreach ($service in $services) {
+                    Start-Job -Name $service.Name -scriptblock { 
+                        param($serviceBusNode, $serviceName)     
+                        Start-Service -InputObject $(get-service -ComputerName $serviceBusNode -Name $serviceName)
+                    } -Argumentlist $service.ServiceBus, $service.Name
+                }
             }
 
             # wait for all jobs to be finished
