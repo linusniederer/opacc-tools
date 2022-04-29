@@ -4,7 +4,7 @@
 # @created:     19.10.2021
 #
 # @changelog:   https://github.com/linusniederer/opacc-tools/tree/main/opacc-maintenance#changelog
-# @current:     https://github.com/linusniederer/opacc-tools/tree/main/opacc-maintenance#version-102---29-apr-2022
+# @current:     https://github.com/linusniederer/opacc-tools/tree/main/opacc-maintenance#version-103---29-apr-2022
 #
 
 # Parameter
