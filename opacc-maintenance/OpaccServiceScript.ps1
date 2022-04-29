@@ -4,7 +4,7 @@
 # @created:     19.10.2021
 #
 # @changelog:   https://github.com/linusniederer/opacc-tools/tree/main/opacc-maintenance#changelog
-# @current:     https://github.com/linusniederer/opacc-tools/tree/main/opacc-maintenance#version-101---04-feb-2022
+# @current:     https://github.com/linusniederer/opacc-tools/tree/main/opacc-maintenance#version-101---29-apr-2022
 #
 
 # Parameter
@@ -24,7 +24,7 @@ class OpaccServices {
     [array] $serviceBusServices = @()
 
     # Regex patterns to declaire service types
-    [string] $regexService      = "Opacc[.]{1}.*[.]{1}(Service[:]{1}|Services[.]Warehouse|Services[.]{1}Service[.]{1}Host|Services[.]{1}Whis|Service[.]{1}Whis)"
+    [string] $regexService      = "Opacc[.]{1}.*[.]{1}(Service[:]{1}|Services[.]Warehouse|Services[.]{1}Service[.]{1}Host|Services[.]{1}Whis|Service[.]{1}Whis)|Opacc.Mof.Whis"
     [string] $regexAgent        = "Opacc[.]{1}.*[.]{1}(?=Agent[:]{1}|Messenger)"
     [string] $regexServiceBus   = "Opacc[.]{1}ServiceBus[.]{1}App"
     [string] $regexFrontend     = "Opacc[.]OxasFrontend"
