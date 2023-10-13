@@ -32,8 +32,8 @@ class OpaccServices {
     # Array of service types
     [array] $serviceTypes       = @("Service", "Frontend", "Agent", "ServiceBus")
 
-    [array] $startSequence      = @("Frontend", "ServiceBus", "Service", "Agent")
-    [array] $stopSequence       = @("Agent", "Service", "ServiceBus", "Frontend")
+    [array] $startSequence      = @("ServiceBus", "Service", "Agent", "Frontend")
+    [array] $stopSequence       = @("Frontend", "Agent", "Service", "ServiceBus")
     
 
     # Constructor of Class
